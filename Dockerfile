@@ -10,4 +10,6 @@ RUN INSTALL_PKGS=" \
     yum install -y epel-release && \
     yum install -y ${INSTALL_PKGS} && rpm -V ${INSTALL_PKGS} && \
     yum clean all && \
-    rm -rf /var/lib/rpm /var/lib/yum/history
+    rm -rf /var/lib/rpm /var/lib/yum/history && \
+    chmod -R uga+rwx /var/lib/nginx /var/log/nginx /run
+USER 1001
