@@ -40,6 +40,7 @@ id = {{ .Name }}
 name = {{ .Name }}
 baseurl = {{ .URL }}
 enabled = 1
+gpgcheck = 0
 `
 
 // ConfigAccessor returns the last valid configuration.
