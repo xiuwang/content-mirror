@@ -50,6 +50,9 @@ func LoadRPMRepoUpstreams(iniFile string) ([]Upstream, error) {
 			if err != nil {
 				return nil, fmt.Errorf("repo %s has a base URL that is not a valid URL: %v", iniFile, u)
 			}
+			if !strings.HasSuffix(url.Path, "/") {
+				url.Path += "/"
+			}
 			urls = append(urls, url)
 		}
 		if len(urls) == 0 {
