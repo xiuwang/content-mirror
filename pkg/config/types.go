@@ -6,12 +6,14 @@ type CacheConfig struct {
 	MaxCacheSize     string
 	InactiveDuration string
 
+	LogLevel string
+
 	Frontends []Frontend
 	Upstreams []Upstream
 }
 
 type Frontend struct {
-	Port            int
+	Listen          string
 	CertificatePath string
 	KeyPath         string
 }

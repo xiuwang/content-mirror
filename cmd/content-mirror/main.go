@@ -21,6 +21,7 @@ func main() {
 		CacheDir:     "/tmp/cache",
 		MaxCacheSize: "1g",
 		CacheTimeout: "15m",
+		Listen:       "8080",
 
 		LocalPort: 9001,
 	}
@@ -40,6 +41,8 @@ func main() {
 	cmd.Flags().StringVar(&opt.CacheDir, "cache-dir", opt.CacheDir, "The directory to cache mirrored content into.")
 	cmd.Flags().StringVar(&opt.MaxCacheSize, "max-size", opt.MaxCacheSize, "The maximum size of the cache (e.g. 10g, 100m).")
 	cmd.Flags().StringVar(&opt.CacheTimeout, "timeout", opt.CacheTimeout, "How long an item is kept in the cache.")
+	cmd.Flags().StringVar(&opt.Listen, "listen", opt.Listen, "The address (host:port, host, or port) to bind to for serving content.")
+	cmd.Flags().BoolVarP(&opt.Verbose, "verbose", "v", opt.Verbose, "Display verbose output from the local server and nginx.")
 
 	if err := cmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
@@ -55,7 +58,9 @@ type Options struct {
 	MaxCacheSize string
 	CacheTimeout string
 
+	Listen    string
 	LocalPort int
+	Verbose   bool
 }
 
 // Run launches the configuration generator, the nginx process, and
@@ -66,14 +71,19 @@ func (opt *Options) Run() error {
 		return err
 	}
 
+	level := "warn"
+	if opt.Verbose {
+		level = "debug"
+	}
 	cacheConfig := &config.CacheConfig{
+		LogLevel:         level,
 		LocalPort:        opt.LocalPort,
 		CacheDir:         opt.CacheDir,
 		MaxCacheSize:     opt.MaxCacheSize,
 		InactiveDuration: opt.CacheTimeout,
 		Frontends: []config.Frontend{
 			{
-				Port: 8080,
+				Listen: opt.Listen,
 			},
 		},
 	}

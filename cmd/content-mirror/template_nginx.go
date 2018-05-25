@@ -4,7 +4,7 @@ const nginxConfigTemplate = `
 {{ $config := . -}}
 worker_processes  5;  ## Default: 1
 worker_rlimit_nofile 8192;
-error_log stderr warn;
+error_log stderr {{ .LogLevel }};
 daemon off;
 
 events {
@@ -40,7 +40,7 @@ http {
 {{- end }}
 {{- range .Frontends }}
   server {
-    listen {{ .Port }};
+    listen {{ .Listen }};
 
     {{- if gt (len .CertificatePath) 0 }}
     ssl_certificate {{ .CertificatePath }}
@@ -62,6 +62,7 @@ http {
       # Enable caching and report the status as a header
       proxy_cache_valid 200 302 {{ $config.InactiveDuration }};
       add_header X-Proxy-CacheConfig   $upstream_cache_status;
+      proxy_set_header Host {{ index .Hosts 0 }};
 
       {{- if .TLS }}
       proxy_ssl_session_reuse on;
