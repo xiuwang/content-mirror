@@ -1,8 +1,8 @@
-FROM openshift/origin-release:golang-1.9
+FROM quay.io/openshifttest/origin-release:golang-1.9
 COPY . /go/src/github.com/openshift/content-mirror/
 RUN GOPATH=/go go install github.com/openshift/content-mirror/cmd/content-mirror
 
-FROM centos:7
+FROM quay.io/openshifttest/centos:7
 COPY --from=0 /go/bin/content-mirror /usr/bin/content-mirror
 COPY nginx.repo /etc/yum.repos.d/nginx.repo
 RUN INSTALL_PKGS=" \
